@@ -56,7 +56,7 @@ def count_by_manufacturer(data):
     """Counts the total number of computers by manufacturer."""
     histogram = {}
     for computer in data:
-        manufacturer = computer.get(u'Manufacturer')
+        manufacturer = computer.get(u'Manufacturer', u'').title()
         if manufacturer:
             if manufacturer in histogram:
                 histogram[manufacturer] += 1
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     # count computers by manufacturer
     # sort and reduce the histogram before recording it
     mfg_count = count_by_manufacturer(data)
-    mfg_count = sort_reduce(mfg_count, 10)
+    mfg_count = sort_reduce(mfg_count, 5)
     write_json('./output/doe.mfg.json', mfg_count)
     # index type of computer by manufacturer
     type_index = index_acquisitions(data)
