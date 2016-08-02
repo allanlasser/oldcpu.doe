@@ -5,6 +5,7 @@
     </head>
     <body>
         <canvas id="yearChart" width="600" height="400"></canvas>
+        <canvas id="mfgChart" width="600" height="400"></canvas>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
         <script type="text/javascript">
             function getValues(dictionary) {
@@ -37,15 +38,13 @@
             function renderYearChart(response) {
                 // Renders a horizontal bar graph to show the distribution of computers by year
                 var yearData = JSON.parse(response);
-                console.log(yearData);
-                console.log(Object.keys(yearData));
                 var chartElement = document.getElementById('yearChart');
                 var chartData = {
                     labels: Object.keys(yearData),
                     datasets: [{
                         data: getValues(yearData),
                     }],
-                }
+                };
                 var chartOptions = {};
                 var chart = new Chart(chartElement, {
                     type: 'horizontalBar',
@@ -54,9 +53,28 @@
                 });
             }
 
+            function renderManufacturerChart(response) {
+                // Renders a pie chart to show the distribution of computers by manufacturer
+                var mfgData = JSON.parse(response);
+                var chartElement = document.getElementById('mfgChart');
+                var chartData = {
+                    labels: Object.keys(mfgData),
+                    datasets: [{
+                        data: getValues(mfgData),
+                    }],
+                };
+                var chartOptions = {};
+                var chart = new Chart(chartElement, {
+                    type: 'pie',
+                    data: chartData,
+                    options: chartOptions,
+                });
+            }
+
             function renderAllCharts() {
                 // RENDER ALL THE CHARTS!
                 loadJSON('./output/doe.year.json', renderYearChart);
+                loadJSON('./output/doe.mfg.json', renderManufacturerChart);
             }
 
             renderAllCharts();

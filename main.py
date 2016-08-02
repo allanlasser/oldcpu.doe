@@ -8,6 +8,7 @@ by Allan Lasser (@allanlasser) for MuckRock (@muckrock)
 
 import datetime
 import json
+import operator
 
 def read_json(filename):
     """Opens a JSON file and returns the data"""
@@ -22,6 +23,21 @@ def write_json(filename, data):
     f.write(json_data)
     f.close()
     return json_data
+
+def sort_reduce(histogram, limit):
+    """Sorts and reduces a histogram to only include items up to the "limit,"
+    and combining all the rest into an "Other" bucket."""
+    sorted_histogram = sorted(histogram.items(), key=operator.itemgetter(1))
+    sorted_histogram.reverse()
+    if len(sorted_histogram) > limit:
+        # if more items than our limit allows, combine all the trailing values
+        # since we sorted the histogram, we're dealing with an array of arrays
+        combined_value = 0
+        for bucket in sorted_histogram[limit:]:
+            combined_value += bucket[-1]
+        sorted_histogram = sorted_histogram[:limit]
+        sorted_histogram.append(["Other", combined_value])
+    return dict(sorted_histogram)
 
 def count_by_year(data):
     """Counts the total number of computers by the year they were aquired."""
@@ -62,15 +78,17 @@ def index_acquisitions(data):
     for name in index:
         # We use the list of computers as the input for the counting method
         index[name] = count_by_manufacturer(index[name])
-    return index   
+    return index
 
-if __name__ == '__main__':        
+if __name__ == '__main__':
     data = read_json('./input/doe.json')
     # count computers by year
     year_count = count_by_year(data)
     write_json('./output/doe.year.json', year_count)
     # count computers by manufacturer
+    # sort and reduce the histogram before recording it
     mfg_count = count_by_manufacturer(data)
+    mfg_count = sort_reduce(mfg_count, 10)
     write_json('./output/doe.mfg.json', mfg_count)
     # index type of computer by manufacturer
     type_index = index_acquisitions(data)
