@@ -45,7 +45,11 @@
                         data: getValues(yearData),
                     }],
                 };
-                var chartOptions = {};
+                var chartOptions = {
+                    'title': {
+                        'text': 'Hardware Acquisitions per Year',
+                    },
+                };
                 var chart = new Chart(chartElement, {
                     type: 'horizontalBar',
                     data: chartData,
@@ -60,10 +64,26 @@
                 var chartData = {
                     labels: Object.keys(mfgData),
                     datasets: [{
+                        backgroundColor: [
+                            "#662C29",
+                            "#CC5C52",
+                            "#296633",
+                            "#52CC66",
+                            "#294366",
+                            "#4582CC",
+                        ],
                         data: getValues(mfgData),
                     }],
                 };
-                var chartOptions = {};
+                var chartOptions = {
+                    'title': {
+                        'text': 'Top Manufacturers',
+                    },
+                    'legend': {
+                        'display': true,
+                        'position': 'bottom',
+                    },
+                };
                 var chart = new Chart(chartElement, {
                     type: 'pie',
                     data: chartData,
@@ -73,6 +93,15 @@
 
             function renderAllCharts() {
                 // RENDER ALL THE CHARTS!
+                // ...but first set their defaults to be #onbrand
+                Chart.defaults.global.defaultFontFamily = "Source Sans Pro";
+                Chart.defaults.global.defaultFontColor = "#333C47";
+                Chart.defaults.global.defaultFontSize = 14;
+                Chart.defaults.global.title.display = true;
+                Chart.defaults.global.title.fontSize = 23;
+                Chart.defaults.global.legend.display = false;
+                Chart.defaults.global.elements.rectangle.backgroundColor = "#4582CC";
+                // Ok, now render all (2) of the charts!
                 loadJSON('./output/doe.year.json', renderYearChart);
                 loadJSON('./output/doe.mfg.json', renderManufacturerChart);
             }
