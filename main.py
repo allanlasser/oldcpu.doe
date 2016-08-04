@@ -64,6 +64,21 @@ def count_by_manufacturer(data):
                 histogram[manufacturer] = 1
     return histogram
 
+def index_manufacturer_by_year(data):
+    """First indexes aquisitions by manufacturer, then counts them by year."""
+    _index = {}
+    for computer in data:
+        # For each manufacturer, we list the computers with that type
+        manufacturer = computer.get(u'Manufacturer', u'').title()
+        if manufacturer:
+            if manufacturer in _index:
+                _index[manufacturer].append(computer)
+            else:
+                _index[manufacturer] = [computer]
+    for manufacturer in _index:
+        _index[manufacturer] = count_by_year(_index[manufacturer])
+    return _index
+
 def index_acquisitions(data):
     """Indexes the type of acquisition by category and then by manufacturer."""
     index = {}
@@ -90,6 +105,9 @@ if __name__ == '__main__':
     mfg_count = count_by_manufacturer(data)
     mfg_count = sort_reduce(mfg_count, 5)
     write_json('./output/doe.mfg.json', mfg_count)
+    # index manufacturer by year
+    type_index = index_manufacturer_by_year(data)
+    write_json('./output/doe.mfg.year.json', type_index)
     # index type of computer by manufacturer
     type_index = index_acquisitions(data)
     write_json('./output/doe.index.json', type_index)
